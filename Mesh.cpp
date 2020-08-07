@@ -13,9 +13,9 @@ using std::vector;
 using std::string;
 
 
-/****************************************
+/*
 *
-****************************************/
+*/
 Mesh::Mesh(vector<Vertex> vert, vector<unsigned int> ind, vector<Texture> tex)
 	: vertices(vert), indices(ind), textures(tex) 
 {
@@ -23,9 +23,9 @@ Mesh::Mesh(vector<Vertex> vert, vector<unsigned int> ind, vector<Texture> tex)
 }
 
 
-/****************************************
+/*
 *
-****************************************/
+*/
 void Mesh::setupMesh()
 {
 	glGenVertexArrays(1, &VAO);
@@ -63,9 +63,9 @@ void Mesh::setupMesh()
 }
 
 
-/****************************************
+/*
 *
-****************************************/
+*/
 void Mesh::draw(Shader& shader)
 {
 	// Types to be binded to the shader for lighting effects
