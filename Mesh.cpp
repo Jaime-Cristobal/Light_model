@@ -71,8 +71,8 @@ void Mesh::draw(Shader& shader)
 	// Types to be binded to the shader for lighting effects
 	// These variables refer to the amount of each lighting source type used per texture
 	// ex. amount of diffuse, specular, etc.
-	unsigned int diffuseAmnt = 1;
-	unsigned int specularAmnt = 1;
+	unsigned int diffuseAmnt{ 1 };
+	unsigned int specularAmnt{ 1 };
 	unsigned int normalAmnt = 1;
 	unsigned int heightAmnt = 1;
 
