@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <algorithm>
 
 #include "Mesh.h"
 #include "stb_image.h"
@@ -18,6 +19,7 @@ namespace lmt
 	class Model
 	{
 	private:
+		int texCoordAmnt;
 		std::vector<Texture> textures_loaded;
 		std::vector<Mesh> meshes;
 		std::string directory;
@@ -29,7 +31,10 @@ namespace lmt
 		std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
 	public:
-		Model(std::string const& path, bool gamma = false);
+		Model(std::string const& path, int texCoordAmnt, bool gamma = false);
 		void draw(Shader& shader);
 	};
+
+	glm::vec3 get3DVectorAttr(aiVector3D const& vec);
+	glm::vec2 get2DVectorAttr(aiVector3D const& vec);
 }
