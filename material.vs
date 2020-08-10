@@ -15,10 +15,8 @@ out vec2 TexCoords;
 void main()
 {
 	FragPos = vec3(model * vec4(aPos, 1.0));
-	Normal = mat3(transpose(inverse(model))) * aNormal;		// inversing is very expensive and should be done on the CPU instead!
-															// basically do this before passing it to the shaders like the model matrix.
-															// We multiply by an inverse transpose so we get a scaled perpenduclar vector
-															// of the surface.
+	Normal = mat3(transpose(inverse(model))) * aNormal;		// NOTE to self: put this process inside the cpp files so
+															// matrix processing is inside the CPU instead of GPU.
 
 	gl_Position = projection * view * vec4(FragPos, 1.0);
 	TexCoords = aTexCoords;
