@@ -77,7 +77,8 @@ void Mesh::draw(Shader& shader)
 	unsigned int heightAmnt = 1;
 
 	for_each(begin(textures), end(textures), 
-		[&, idx = 0](Texture tex) mutable { 
+		[&, idx = 0](auto tex) mutable 
+		{ 
 			glActiveTexture(GL_TEXTURE0 + idx);
 
 			// retrieve texture number

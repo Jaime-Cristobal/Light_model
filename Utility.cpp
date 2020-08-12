@@ -1,15 +1,18 @@
 #include "Utility.h"
 
 
+/**
+* 
+*/
 unsigned int lmt::loadTexture(std::string path, std::string const& directory, bool gamma)
 {
-	std::string file = directory + '/' + path;
+	auto file{ directory + '/' + path };
 	unsigned int textureID;
 
 	glGenTextures(1, &textureID);
 
 	int width, height, componentAmnt;
-	unsigned char* data = stbi_load(file.c_str(), &width, &height, &componentAmnt, 0);
+	auto* data = stbi_load(file.c_str(), &width, &height, &componentAmnt, 0);
 
 	if (data)
 	{

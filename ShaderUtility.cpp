@@ -51,7 +51,7 @@ std::string utl::readFileContents(std::string const& path)
 void utl::createShader(GLuint& shader, GLenum shaderType, std::string const& code)
 {
 	// for compability with GLchar *const*
-	char const* codePtr = code.c_str();
+	auto const* codePtr{ code.c_str() };
 
 	shader = glCreateShader(shaderType);
 	glShaderSource(shader, 1, &codePtr, nullptr);

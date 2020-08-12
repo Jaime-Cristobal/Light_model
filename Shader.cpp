@@ -9,8 +9,8 @@ using utl::createShaderProgram;
 
 Shader::Shader(string const& vertexPath, string const& fragmentPath)
 {
-	string vertexCode = readFileContents(vertexPath);
-	string fragmentCode = readFileContents(fragmentPath);
+	auto vertexCode = readFileContents(vertexPath);
+	auto fragmentCode = readFileContents(fragmentPath);
 	
 	// shader initialization
 	GLuint vertex, fragment;

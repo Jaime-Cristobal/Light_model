@@ -2,6 +2,8 @@
 using lmt::Model;
 // #include "Mesh.h"
 using lmt::Mesh;
+using lmt::Texture;
+using lmt::Vertex;
 
 // #include <iostream>
 using std::cout;
@@ -40,7 +42,7 @@ void Model::loadModel(string path)
 	//
 	// Using assimp postprocessing for speed optimizations on getting those faces.
 	Assimp::Importer import;
-	aiScene const* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	auto const* scene{ import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace) };
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -87,11 +89,85 @@ Mesh Model::processMesh(aiMesh* mesh, aiScene const* scene)
 		vertices.push_back(vertex);
 	}
 
-	// Get the indices which are the faces
-	for (aiFace const& face : mesh->mFaces)		// NOTE: mFaces is a pointer, NOT AN ARRAY
-	{											// Note to self: try old school for loops using mNumFaces
-												// next time.
+	// get the indices which are the faces
+	for (unsigned int f = 0; f < mesh->mNumFaces; f++)
+	{											
+		auto face{ mesh->mFaces[f] };
+
+		// store all retrieved face incides
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
+			indices.push_back(face.mIndices[j]);
 	}
+
+	// process materials needed for textures and lighting
+	if (mesh->mMaterialIndex >= 0)
+	{
+		auto assimpMatInd{ mesh->mMaterialIndex };
+		// pointer owned by assimp
+		auto* material{ scene->mMaterials[assimpMatInd] };
+
+		// NOTE: might have to change var name like "texture_diffuse" in some kind of global since that is GLSL dependant
+		// diffuse maps
+		auto diffuseMaps{ loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse") };
+		textures.insert(end(textures), begin(diffuseMaps), end(diffuseMaps));
+
+		// specular maps
+		auto specularMaps{ loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular") };
+		textures.insert(end(textures), begin(specularMaps), end(specularMaps));
+
+		// normal maps
+		auto normalMaps{ loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal") };
+		textures.insert(end(textures), begin(normalMaps), end(normalMaps));
+
+		// height maps
+		auto heightMaps{ loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height") };
+		textures.insert(end(textures), begin(heightMaps), end(heightMaps));
+	}
+
+	return Mesh(vertices, indices, textures);
+}
+
+
+
+/**
+* 
+*/
+vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName)
+{
+	vector<Texture> textures;
+
+	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+	{
+		aiString str;
+		mat->GetTexture(type, i, &str);
+
+		// check if texture was loaded before to avoid duplicates. We skip if a duplicate is found
+		auto skip = false;
+		find_if(begin(textures_loaded), end(textures_loaded), 
+			[&](Texture loadedTex) -> bool {
+				if (std::strcmp(loadedTex.path.data(), str.C_Str()) == 0)
+				{
+					textures.push_back(loadedTex);
+					skip = true;
+				}
+
+				return skip;
+			}
+		);
+
+		if (!skip)
+		{
+			Texture texture;
+			texture.id = lmt::loadTexture(str.C_Str(), directory);
+			texture.type = typeName;
+			texture.path = str.C_Str();
+
+			textures.push_back(texture);
+			textures_loaded.push_back(texture);
+		}
+	}
+
+	return textures;
 }
 
 
@@ -119,4 +195,13 @@ glm::vec2 lmt::get2DVectorAttr(aiVector3D const& vec)
 	vector.y = vec.y;
 
 	return vector;
+}
+
+
+/**
+*
+*/
+void Model::draw(Shader& shader)
+{
+	for_each(begin(meshes), end(meshes), [&](Mesh mesh) { mesh.draw(shader); });
 }
