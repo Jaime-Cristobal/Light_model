@@ -6,22 +6,25 @@
 #include <memory>
 
 
-class Launcher
+namespace lmt 
 {
-private:
-	typedef std::unique_ptr<GLFWwindow, DestroyGLFW> SmartGLFWwindow;
-	SmartGLFWwindow window;
-	unsigned int const winWidth;
-	unsigned int const winHeight;
-	std::string const title;
+	class Launcher
+	{
+	private:
+		typedef std::unique_ptr<GLFWwindow, DestroyGLFW> SmartGLFWwindow;
+		SmartGLFWwindow window;
+		unsigned int const winWidth;
+		unsigned int const winHeight;
+		std::string const title;
 
-	void start() const;
+		void start() const;
 
-public:
-	Launcher();
-	void render() const;
-	void run() const;
-};
+	public:
+		Launcher();
+		void render() const;
+		void run() const;
+	};
 
-void frameBufferSizeCallback(GLFWwindow* const window, int const width, int const height);
-void processInput(GLFWwindow* const window);
+	void frameBufferSizeCallback(GLFWwindow* const window, int const width, int const height);
+	void processInput(GLFWwindow* const window);
+}

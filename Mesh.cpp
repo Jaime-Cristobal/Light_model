@@ -14,7 +14,7 @@ using std::string;
 
 
 /*
-*
+* 
 */
 Mesh::Mesh(vector<Vertex> vert, vector<unsigned int> ind, vector<Texture> tex)
 	: vertices(vert), indices(ind), textures(tex) 

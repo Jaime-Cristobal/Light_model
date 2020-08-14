@@ -32,7 +32,7 @@ Model::Model(string const& path, int texCoordAmnt, bool gamma) : gammaCorrection
 /**
 *
 */
-void Model::loadModel(string path)
+void Model::loadModel(string const& path)
 {
 	// assimp has ownership of the pointer so it will delete the resource once
 	// it's destructor is invoked. It's invoked once this function loadModel(...) is out of scope.
@@ -58,19 +58,55 @@ void Model::loadModel(string path)
 
 
 /**
+* 
+*/
+void Model::processNode(aiNode* node, aiScene const* scene)
+{
+	// Process any of the node's present meshes. There might or might not be a mesh available.
+	for (unsigned int m = 0; m < node->mNumMeshes; m++)
+	{
+		unsigned int index = node->mMeshes[m];
+		aiMesh* mesh = scene->mMeshes[index];			// scene actually contains the mesh data
+		meshes.push_back(processMesh(mesh, scene));
+	}
+
+	// process node's children
+	for (unsigned int c = 0; c < node->mNumChildren; c++)
+	{
+		processNode(node->mChildren[c], scene);
+	}
+}
+
+
+/**
 *
 */
 Mesh Model::processMesh(aiMesh* mesh, aiScene const* scene)
 {
-	vector<Vertex> vertices;
-	vector<unsigned int> indices;
-	vector<Texture> textures;
-
 	// get vertex positions, normals, tangets, bitangents, and texture coordinates (if present)
+	auto const vertices{ getAssimpVertexData(mesh) };
+
+	// get the mesh indices which are the faces
+	auto const indices{ getAssimpMeshData(mesh) };
+
+	// process materials needed for textures and lighting
+	auto const textures{ getAssimpTextureData(mesh, scene) };
+
+	return Mesh(vertices, indices, textures);
+}
+
+
+/**
+* 
+*/
+std::vector<Vertex> Model::getAssimpVertexData(aiMesh const* const mesh) const
+{
+	vector<Vertex> vertices;
+
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
 		Vertex vertex;
-		
+
 		vertex.position = get3DVectorAttr(mesh->mVertices[i]);
 		vertex.normal = get3DVectorAttr(mesh->mNormals[i]);
 		vertex.tangent = get3DVectorAttr(mesh->mTangents[i]);
@@ -89,9 +125,19 @@ Mesh Model::processMesh(aiMesh* mesh, aiScene const* scene)
 		vertices.push_back(vertex);
 	}
 
-	// get the indices which are the faces
+	return vertices;
+}
+
+
+/**
+*
+*/
+std::vector<unsigned int> Model::getAssimpMeshData(aiMesh const* const mesh) const
+{
+	vector<unsigned int> indices;
+
 	for (unsigned int f = 0; f < mesh->mNumFaces; f++)
-	{											
+	{
 		auto face{ mesh->mFaces[f] };
 
 		// store all retrieved face incides
@@ -99,7 +145,17 @@ Mesh Model::processMesh(aiMesh* mesh, aiScene const* scene)
 			indices.push_back(face.mIndices[j]);
 	}
 
-	// process materials needed for textures and lighting
+	return indices;
+}
+
+
+/**
+*
+*/
+std::vector<Texture> Model::getAssimpTextureData(aiMesh const* const mesh, aiScene const* const scene)
+{
+	vector<Texture> textures;
+
 	if (mesh->mMaterialIndex >= 0)
 	{
 		auto assimpMatInd{ mesh->mMaterialIndex };
@@ -124,15 +180,14 @@ Mesh Model::processMesh(aiMesh* mesh, aiScene const* scene)
 		textures.insert(end(textures), begin(heightMaps), end(heightMaps));
 	}
 
-	return Mesh(vertices, indices, textures);
+	return textures;
 }
-
 
 
 /**
 * 
 */
-vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName)
+vector<Texture> Model::loadMaterialTextures(aiMaterial const* const mat, aiTextureType type, string const& typeName)
 {
 	vector<Texture> textures;
 

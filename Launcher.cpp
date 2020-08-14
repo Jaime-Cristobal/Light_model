@@ -1,4 +1,5 @@
 #include "Launcher.h"
+using lmt::Launcher;
 #include "Shader.h"
 #include <iostream>
 using std::cout;
@@ -72,13 +73,13 @@ void Launcher::render() const
 }
 
 
-void frameBufferSizeCallback(GLFWwindow* const window, int const width, int const height)
+void lmt::frameBufferSizeCallback(GLFWwindow* const window, int const width, int const height)
 {
 	glViewport(0, 0, width, height);
 }
 
 
-void processInput(GLFWwindow* const window)
+void lmt::processInput(GLFWwindow* const window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
