@@ -10,8 +10,7 @@ using lmt::Camera;
 * @param
 * @param
 */
-Camera::Camera(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), 
-	float yawP = globals::YAW, float pitchP = globals::PITCH)
+Camera::Camera(glm::vec3 pos, glm::vec3 up, float yawP, float pitchP)
 	: frontVector(glm::vec3(0.0f, 0.0f, -1.0f)), 
 	  movementSpeed(globals::SPEED), 
 	  mouseSensitivity(globals::SENSITIVITY),

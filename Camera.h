@@ -32,7 +32,10 @@ namespace lmt
 
 	public:
 		// constructor with vector
-		Camera(glm::vec3 pos, glm::vec3 up, float yawP, float pitchP);
+		Camera(glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), 
+							   glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), 
+							   float yawP = globals::YAW, 
+							   float pitchP = globals::PITCH);
 		// constructor with scalar
 		Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 		void processKeyBoard(CameraMovement direction, float delta);

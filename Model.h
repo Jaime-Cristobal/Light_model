@@ -37,7 +37,6 @@ namespace lmt
 		Model(std::string const& path, int texCoordAmnt, bool gamma = false);
 		void draw(Shader& shader);
 	};
-
 	
 	glm::vec3 get3DVectorAttr(aiVector3D const& vec);
 	glm::vec2 get2DVectorAttr(aiVector3D const& vec);

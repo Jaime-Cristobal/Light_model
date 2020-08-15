@@ -1,12 +1,16 @@
 #include "Launcher.h"
 using lmt::Launcher;
+// #include "Camera.h"
+using lmt::Camera;
 #include "Shader.h"
 #include <iostream>
 using std::cout;
 using std::endl;
 
 
-Launcher::Launcher() : winWidth(800), winHeight(600), title("OpenGL Proj")
+Launcher::Launcher(unsigned int width, unsigned int height, std::string const& title) 
+	: winWidth(width), winHeight(height), cam(glm::vec3(0.0f, 0.0f, 3.0f)), firstMouse(true), 
+	lastX(width / 2.0f), lastY(height / 2.0f), deltaTime(0.0f), lastFrame(0.0f)
 {
 	// glfw: initialize and configuration
 	glfwInit();
@@ -36,6 +40,8 @@ void Launcher::start() const
 
 	glfwMakeContextCurrent(window.get());
 	glfwSetFramebufferSizeCallback(window.get(), frameBufferSizeCallback);
+	glfwSetCursorPosCallback(window.get(), mouseCallBack);
+	glfwSetScrollCallback(window.get(), scrollCallBack);
 
 	// glad: Load all OpenGL functions
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -50,7 +56,7 @@ void Launcher::start() const
 
 void Launcher::run() const
 {
-	lmt::Shader shader("shader.vs", "shader.fs");
+	lmt::Shader shader("material.vs", "Multiple_light.fs");
 
 	while (!glfwWindowShouldClose(window.get()))
 	{
@@ -72,15 +78,44 @@ void Launcher::render() const
 
 }
 
-
-void lmt::frameBufferSizeCallback(GLFWwindow* const window, int const width, int const height)
+/**
+* FREE FUNCTIONS
+* For C library constraints with GLFW.
+*/
+void lmt::frameBufferSizeCallback(GLFWwindow* win, int const width, int const height)
 {
 	glViewport(0, 0, width, height);
 }
 
 
-void lmt::processInput(GLFWwindow* const window)
+void lmt::processInput(GLFWwindow* win)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+	if (glfwGetKey(win, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(win, true);
+}
+
+
+void lmt::mouseCallBack(GLFWwindow* win, Camera& cam, bool& firstMouse, float& lastX, float& lastY, float xPos, float yPos)
+{
+	if (firstMouse)
+	{
+		lastX = xPos;
+		lastY = yPos;
+		firstMouse = false;
+	}
+
+	// distance between new and old positions from mouse and keyboard movements
+	float xOffset = xPos - lastX;
+	float yOffset = lastY - yPos;
+
+	lastX = xPos;
+	lastY = yPos;
+
+	cam.processMouseMovement(xOffset, yOffset, true);
+}
+
+
+void lmt::scrollCallBack(GLFWwindow* win, Camera& cam, float yOffset)
+{
+	cam.processMouseScroll(yOffset);
 }

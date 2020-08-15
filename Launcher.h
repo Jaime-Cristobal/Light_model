@@ -1,9 +1,11 @@
 #pragma once
 
-#include "DestroyGLFW.h"
 #include <glad/glad.h>
 #include <string>
 #include <memory>
+
+#include "DestroyGLFW.h"
+#include "Camera.h"
 
 
 namespace lmt 
@@ -15,16 +17,32 @@ namespace lmt
 		SmartGLFWwindow window;
 		unsigned int const winWidth;
 		unsigned int const winHeight;
-		std::string const title;
+
+		// for camera movements
+		lmt::Camera cam;
+		bool firstMouse;
+		float lastX;
+		float lastY;
+
+		// rendering purposes
+		float deltaTime;
+		float lastFrame;
 
 		void start() const;
+		void render() const;
 
 	public:
-		Launcher();
-		void render() const;
+		Launcher(unsigned int width=800, unsigned int height=600, std::string const& title= "OpenGL Proj");
 		void run() const;
 	};
 
-	void frameBufferSizeCallback(GLFWwindow* const window, int const width, int const height);
-	void processInput(GLFWwindow* const window);
+
+	/**
+	* FREE FUNCTIONS
+	* C callback functions for GLFW.
+	*/
+	void frameBufferSizeCallback(GLFWwindow* win, int const width, int const height);
+	void processInput(GLFWwindow* win);
+	void mouseCallBack(GLFWwindow* win, Camera& cam, bool& firstMouse, float& lastX, float& lastY, float xPos, float yPos);
+	void scrollCallBack(GLFWwindow* win, Camera& cam, float yOffset);
 }
