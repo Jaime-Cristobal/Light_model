@@ -2,8 +2,9 @@
 using lmt::Launcher;
 // #include "Camera.h"
 using lmt::Camera;
-#include "Shader.h"
-#include <iostream>
+// #include "Shader.h"
+using lmt::Shader;
+// #include <iostream>
 using std::cout;
 using std::endl;
 
@@ -19,6 +20,8 @@ Launcher::Launcher(unsigned int width, unsigned int height, std::string const& t
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	window.reset(glfwCreateWindow(winWidth, winHeight, title.c_str(), nullptr, nullptr));
+
+	glfwSetWindowUserPointer(window.get(), this);			// for using lambdas instead of static functions for C callbacks
 
 	start();
 }
@@ -39,9 +42,24 @@ void Launcher::start() const
 	}
 
 	glfwMakeContextCurrent(window.get());
-	glfwSetFramebufferSizeCallback(window.get(), frameBufferSizeCallback);
-	glfwSetCursorPosCallback(window.get(), mouseCallBack);
-	glfwSetScrollCallback(window.get(), scrollCallBack);
+	glfwSetFramebufferSizeCallback(window.get(), 
+		[](GLFWwindow* win, int width, int height) 
+		{
+			static_cast<Launcher*> (glfwGetWindowUserPointer(win))->frameBufferSizeCallback(win, width, height);
+		}
+	);
+	glfwSetCursorPosCallback(window.get(), 
+		[](GLFWwindow* win, double xPos, double yPos) 
+		{
+			static_cast<Launcher*> (glfwGetWindowUserPointer(win))->mouseCallBack(win, xPos, yPos);
+		}
+	);
+	glfwSetScrollCallback(window.get(), 
+		[](GLFWwindow* win, double xOffset, double yOffset) 
+		{
+			static_cast<Launcher*> (glfwGetWindowUserPointer(win))->scrollCallBack(win, xOffset, yOffset);
+		}
+	);
 
 	// glad: Load all OpenGL functions
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -54,13 +72,19 @@ void Launcher::start() const
 }
 
 
-void Launcher::run() const
+void Launcher::run()
 {
-	lmt::Shader shader("material.vs", "Multiple_light.fs");
+	Shader shaderMat("material.vs", "Multiple_light.fs");
+	Shader shaderLight("light.vs", "light.fs");
+
+	Model backpack("backpack/backpack.obj", 1);
+	glm::mat4 projection{ glm::mat4(1.0f) };
+	glm::mat4 view{ glm::mat4(1.0f) };
+	glm::mat4 model{ glm::mat4(1.0f) };
 
 	while (!glfwWindowShouldClose(window.get()))
 	{
-		processInput(window.get());
+		processInput();
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -68,8 +92,30 @@ void Launcher::run() const
 		glfwSwapBuffers(window.get());
 		glfwPollEvents();
 
+		// time logic per frame
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		// testing backpack
+		shaderMat.use();
+
+		projection = glm::perspective(glm::radians(cam.getZoom()),
+			static_cast<float>(winWidth / winHeight), 0.1f, 100.0f);
+		shaderMat.setMat4("projection", projection);
+
+		view = cam.getViewMatrix();
+		shaderMat.setMat4("view", view);
+
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+		shaderMat.setMat4("model", model);
+		backpack.draw(shaderMat);
+
 		render();
 	}
+
+	glfwTerminate();
 }
 
 
@@ -79,43 +125,42 @@ void Launcher::render() const
 }
 
 /**
-* FREE FUNCTIONS
-* For C library constraints with GLFW.
+* For C library callbacks with GLFW.
 */
-void lmt::frameBufferSizeCallback(GLFWwindow* win, int const width, int const height)
+void Launcher::frameBufferSizeCallback(GLFWwindow* win, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
 
 
-void lmt::processInput(GLFWwindow* win)
+void Launcher::processInput()
 {
-	if (glfwGetKey(win, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(win, true);
+	if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window.get(), true);
 }
 
 
-void lmt::mouseCallBack(GLFWwindow* win, Camera& cam, bool& firstMouse, float& lastX, float& lastY, float xPos, float yPos)
+void Launcher::mouseCallBack(GLFWwindow* win, double xPos, double yPos)
 {
 	if (firstMouse)
 	{
-		lastX = xPos;
-		lastY = yPos;
+		lastX = static_cast<float>(xPos);
+		lastY = static_cast<float>(yPos);
 		firstMouse = false;
 	}
 
 	// distance between new and old positions from mouse and keyboard movements
-	float xOffset = xPos - lastX;
-	float yOffset = lastY - yPos;
+	auto xOffset = static_cast<float>(xPos - lastX);
+	auto yOffset = static_cast<float>(lastY - yPos);
 
-	lastX = xPos;
-	lastY = yPos;
+	lastX = static_cast<float>(xPos);
+	lastY = static_cast<float>(yPos);
 
 	cam.processMouseMovement(xOffset, yOffset, true);
 }
 
 
-void lmt::scrollCallBack(GLFWwindow* win, Camera& cam, float yOffset)
+void Launcher::scrollCallBack(GLFWwindow* win, double xOffset, double yOffset)
 {
-	cam.processMouseScroll(yOffset);
+	cam.processMouseScroll(static_cast<float>(yOffset));
 }

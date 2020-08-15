@@ -139,3 +139,9 @@ void Camera::updateCameraVectors()
 	rightVector = glm::normalize(glm::cross(frontVector, worldUp));
 	upVector = glm::normalize(glm::cross(rightVector, frontVector));
 }
+
+
+float Camera::getZoom() const
+{
+	return zoom;
+}
