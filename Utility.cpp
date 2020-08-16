@@ -29,6 +29,7 @@ unsigned int lmt::loadTexture(std::string path, std::string const& directory, bo
 			format = GL_RGBA;
 			break;
 		default:
+			format = GL_RGB;
 			break;
 		}
 

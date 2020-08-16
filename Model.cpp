@@ -84,15 +84,15 @@ void Model::processNode(aiNode* node, aiScene const* scene)
 Mesh Model::processMesh(aiMesh* mesh, aiScene const* scene)
 {
 	// get vertex positions, normals, tangets, bitangents, and texture coordinates (if present)
-	auto const vertices{ getAssimpVertexData(mesh) };
+	auto vertices{ getAssimpVertexData(mesh) };
 
 	// get the mesh indices which are the faces
-	auto const indices{ getAssimpMeshData(mesh) };
+	auto indices{ getAssimpMeshData(mesh) };
 
 	// process materials needed for textures and lighting
-	auto const textures{ getAssimpTextureData(mesh, scene) };
+	auto textures{ getAssimpTextureData(mesh, scene) };
 
-	return Mesh(vertices, indices, textures);
+	return Mesh(std::move(vertices), std::move(indices), std::move(textures));
 }
 
 

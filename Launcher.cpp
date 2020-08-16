@@ -61,6 +61,8 @@ void Launcher::start() const
 		}
 	);
 
+	glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	// glad: Load all OpenGL functions
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -74,9 +76,10 @@ void Launcher::start() const
 
 void Launcher::run()
 {
-	Shader shaderMat("material.vs", "Multiple_light.fs");
+	Shader shaderMat("Mesh_Shader.vs", "Mesh_Shader.fs");
 	Shader shaderLight("light.vs", "light.fs");
 
+	stbi_set_flip_vertically_on_load(true);
 	Model backpack("backpack/backpack.obj", 1);
 	glm::mat4 projection{ glm::mat4(1.0f) };
 	glm::mat4 view{ glm::mat4(1.0f) };
@@ -86,14 +89,11 @@ void Launcher::run()
 	{
 		processInput();
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		glfwSwapBuffers(window.get());
-		glfwPollEvents();
+		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// time logic per frame
-		float currentFrame = glfwGetTime();
+		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
@@ -113,16 +113,24 @@ void Launcher::run()
 		backpack.draw(shaderMat);
 
 		render();
+
+		// buffer and callbackevents
+		glfwSwapBuffers(window.get());
+		glfwPollEvents();
 	}
 
 	glfwTerminate();
 }
 
 
+/**
+*
+*/
 void Launcher::render() const
 {
 
 }
+
 
 /**
 * For C library callbacks with GLFW.
@@ -137,6 +145,15 @@ void Launcher::processInput()
 {
 	if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window.get(), true);
+	
+	if (glfwGetKey(window.get(), GLFW_KEY_W) == GLFW_PRESS)
+		cam.moveForward(deltaTime);
+	if (glfwGetKey(window.get(), GLFW_KEY_S) == GLFW_PRESS)
+		cam.moveBackward(deltaTime);
+	if (glfwGetKey(window.get(), GLFW_KEY_A) == GLFW_PRESS)
+		cam.moveLeftward(deltaTime);
+	if (glfwGetKey(window.get(), GLFW_KEY_D) == GLFW_PRESS)
+		cam.moveRightward(deltaTime);
 }
 
 
