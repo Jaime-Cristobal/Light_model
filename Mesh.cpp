@@ -17,7 +17,7 @@ using std::string;
 * 
 */
 Mesh::Mesh(vector<Vertex> vert, vector<unsigned int> ind, vector<Texture> tex)
-	: vertices(vert), indices(ind), textures(tex) 
+	: vertices(std::move(vert)), indices(std::move(ind)), textures(std::move(tex)) 
 {
 	setupMesh();
 }
@@ -73,8 +73,8 @@ void Mesh::draw(Shader& shader)
 	// ex. amount of diffuse, specular, etc.
 	unsigned int diffuseAmnt{ 1 };
 	unsigned int specularAmnt{ 1 };
-	unsigned int normalAmnt = 1;
-	unsigned int heightAmnt = 1;
+	unsigned int normalAmnt{ 1 };
+	unsigned int heightAmnt{ 1 };
 
 	for_each(begin(textures), end(textures), 
 		[&, idx = 0](auto tex) mutable 

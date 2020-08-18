@@ -6,7 +6,6 @@ using std::vector;
 
 
 LightSource::LightSource() : position(glm::vec3(1.2f, 1.0f, 2.0f)),
-	view(1.0f), projection(1.0f), model(1.0f),
 	vertices({		// positions				// normals        // texture coords
 					-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		0.0f, 0.0f,
 					 0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 0.0f,
@@ -74,11 +73,9 @@ void LightSource::setUpBuffers()
 /**
 * 
 */
-void LightSource::setCoordinateSystem(glm::mat4 const& view, glm::mat4 const& projection, glm::mat4 const& model)
+void LightSource::addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName)
 {
-	this->view = view;
-	this->projection = projection;
-	this->model = model;
+	coordinateSystems.emplace(idName, matrix);
 }
 
 
@@ -87,5 +84,21 @@ void LightSource::setCoordinateSystem(glm::mat4 const& view, glm::mat4 const& pr
 */
 void LightSource::draw(Shader const& shader)
 {
-	
+	for_each(begin(coordinateSystems), end(coordinateSystems), [&](auto const& matrix) {
+		shader.setMat4(matrix.first, matrix.second);
+	});
+}
+
+
+/**
+*
+*/
+void LightSource::draw(Shader const& shader, std::initializer_list<FuncCallbacks> callbackList)
+{
+	for_each(begin(coordinateSystems), end(coordinateSystems), [&](auto const& matrix) {
+		shader.setMat4(matrix.first, matrix.second);
+
+		for (auto callback : callbackList)
+			callback();
+	});
 }
