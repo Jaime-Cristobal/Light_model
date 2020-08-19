@@ -1,6 +1,8 @@
 #include "LightSource.h"
 using lmt::LightSource;
 
+// #include <string>
+using std::string;
 // #include <vector>
 using std::vector;
 
@@ -73,9 +75,18 @@ void LightSource::setUpBuffers()
 /**
 * 
 */
-void LightSource::addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName)
+void LightSource::addCoordinateMatrix(glm::mat4 const& matrix, string const& idName)
 {
 	coordinateSystems.emplace(idName, matrix);
+}
+
+
+/**
+*
+*/
+void LightSource::addCoordinateMatrix(glm::mat4 const& matrix, string const& idName, std::function<void()> const& callback)
+{
+	coordinateSystems.emplace
 }
 
 
@@ -86,19 +97,5 @@ void LightSource::draw(Shader const& shader)
 {
 	for_each(begin(coordinateSystems), end(coordinateSystems), [&](auto const& matrix) {
 		shader.setMat4(matrix.first, matrix.second);
-	});
-}
-
-
-/**
-*
-*/
-void LightSource::draw(Shader const& shader, std::initializer_list<FuncCallbacks> callbackList)
-{
-	for_each(begin(coordinateSystems), end(coordinateSystems), [&](auto const& matrix) {
-		shader.setMat4(matrix.first, matrix.second);
-
-		for (auto callback : callbackList)
-			callback();
 	});
 }

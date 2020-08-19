@@ -7,7 +7,6 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
-#include <initializer_list>
 #include <functional>
 
 #include "Shader.h"
@@ -15,23 +14,30 @@
 
 namespace lmt
 {
+	struct MatCoord
+	{
+		glm::mat4 matrix;
+		std::function<void()> callback;
+		
+		MatCoord(glm::mat4 mat, std::function<void()> const& func) : matrix(mat), callback(func) {}
+	};
+
+
 	class LightSource
 	{
 	private:
-		typedef std::function<void()> FuncCallbacks;
-
 		unsigned int VBO;
 		unsigned int VAO;
 		glm::vec3 position;
 		std::vector<float> vertices;		// temporary cube placeholder
-		std::unordered_map<std::string, glm::mat4> coordinateSystems;
+		std::unordered_map<std::string, MatCoord> coordinateSystems;
 
 		void setUpBuffers();
-		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName);
 
 	public:
 		LightSource();
+		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName);
+		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName, std::function<void()> const& callback);
 		void draw(Shader const& shader);
-		void draw(Shader const& shader, std::initializer_list<FuncCallbacks> callbackList);
 	};
 }
