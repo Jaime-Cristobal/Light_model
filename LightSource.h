@@ -17,9 +17,9 @@ namespace lmt
 	struct MatCoord
 	{
 		glm::mat4 matrix;
-		std::function<void()> callback;
+		std::function<void(glm::mat4)> callback;
 		
-		MatCoord(glm::mat4 mat, std::function<void()> const& func) : matrix(mat), callback(func) {}
+		MatCoord(glm::mat4 mat, std::function<void(glm::mat4)> const& func) : matrix(mat), callback(func) {}
 	};
 
 
@@ -37,7 +37,7 @@ namespace lmt
 	public:
 		LightSource();
 		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName);
-		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName, std::function<void()> const& callback);
+		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName, std::function<void(glm::mat4)> const& callback);
 		void draw(Shader const& shader);
 	};
 }

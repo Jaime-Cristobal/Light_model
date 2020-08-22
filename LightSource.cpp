@@ -77,16 +77,16 @@ void LightSource::setUpBuffers()
 */
 void LightSource::addCoordinateMatrix(glm::mat4 const& matrix, string const& idName)
 {
-	coordinateSystems.emplace(idName, matrix);
+	coordinateSystems.emplace(idName, MatCoord(matrix, nullptr));
 }
 
 
 /**
 *
 */
-void LightSource::addCoordinateMatrix(glm::mat4 const& matrix, string const& idName, std::function<void()> const& callback)
+void LightSource::addCoordinateMatrix(glm::mat4 const& matrix, string const& idName, std::function<void(glm::mat4)> const& callback)
 {
-	coordinateSystems.emplace
+	coordinateSystems.emplace(idName, MatCoord(matrix, callback));
 }
 
 
@@ -95,7 +95,14 @@ void LightSource::addCoordinateMatrix(glm::mat4 const& matrix, string const& idN
 */
 void LightSource::draw(Shader const& shader)
 {
-	for_each(begin(coordinateSystems), end(coordinateSystems), [&](auto const& matrix) {
-		shader.setMat4(matrix.first, matrix.second);
+	for_each(begin(coordinateSystems), end(coordinateSystems), [&](auto const& pair) {
+		auto idName = pair.first;
+		auto matrix = pair.second.matrix;
+		auto callback = pair.second.callback;
+
+		shader.setMat4(idName, matrix);
+
+		if (callback)
+			callback(matrix);
 	});
 }
