@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Model.h"
+#include "LightSource.h"
 
 
 namespace lmt 

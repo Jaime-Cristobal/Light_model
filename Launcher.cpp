@@ -85,6 +85,11 @@ void Launcher::run()
 	glm::mat4 view{ glm::mat4(1.0f) };
 	glm::mat4 model{ glm::mat4(1.0f) };
 
+	LightSource light;
+	light.addCoordinateMatrix(glm::mat4(1.0f), "projection");
+	light.addCoordinateMatrix(glm::mat4(1.0f), "view");
+	light.addCoordinateMatrix(glm::mat4(1.0f), "model");
+
 	while (!glfwWindowShouldClose(window.get()))
 	{
 		processInput();
@@ -111,6 +116,13 @@ void Launcher::run()
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
 		shaderMat.setMat4("model", model);
 		backpack.draw(shaderMat);
+
+		shaderLight.use();
+		light.editCoordinateMatrix(projection, "projection");
+		light.editCoordinateMatrix(view, "view");
+		model = glm::scale(model, glm::vec3(0.2f));
+		light.editCoordinateMatrix(model, "model");
+		light.draw(shaderLight);
 
 		render();
 
