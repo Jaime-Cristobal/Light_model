@@ -37,10 +37,11 @@ namespace lmt
 		void setUpBuffers();
 
 	public:
-		LightSource();
+		LightSource(glm::vec3 pos = glm::vec3(1.2f, 1.0f, 2.0f));
 		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName);
 		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName, std::function<void(glm::mat4)> const& callback);
 		void editCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName);
 		void draw(Shader const& shader);
+		glm::vec3 getPosition() const;
 	};
 }

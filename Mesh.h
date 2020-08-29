@@ -29,6 +29,13 @@ namespace lmt
 		glm::vec2 texCoord;
 	};
 
+	struct Light
+	{
+		glm::vec3 ambient;
+		glm::vec3 diffuse;
+		glm::vec3 specular;
+	};
+
 	struct Texture
 	{
 		unsigned int id;

@@ -5,9 +5,10 @@ using lmt::LightSource;
 using std::string;
 // #include <vector>
 using std::vector;
+#include <iostream>
 
 
-LightSource::LightSource() : position(glm::vec3(1.2f, 1.0f, 2.0f)),
+LightSource::LightSource(glm::vec3 pos) : position(pos), VBO(0), VAO(0),
 	vertices({		// positions				// normals        // texture coords
 					-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		0.0f, 0.0f,
 					 0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 0.0f,
@@ -52,7 +53,7 @@ LightSource::LightSource() : position(glm::vec3(1.2f, 1.0f, 2.0f)),
 					-0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,		0.0f, 1.0f 
 	})
 {
-
+	std::cout << "LightSource is created!" << std::endl;
 }
 
 
@@ -104,6 +105,8 @@ void LightSource::editCoordinateMatrix(glm::mat4 const& matrix, std::string cons
 */
 void LightSource::draw(Shader const& shader)
 {
+	glBindVertexArray(VAO);
+
 	for_each(begin(coordinateSystems), end(coordinateSystems), [&](auto const& pair) {
 		auto idName = pair.first;
 		auto matrix = pair.second.matrix;
@@ -114,4 +117,15 @@ void LightSource::draw(Shader const& shader)
 
 		shader.setMat4(idName, matrix);
 	});
+
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+
+/**
+*
+*/
+glm::vec3 LightSource::getPosition() const
+{
+	return position;
 }
