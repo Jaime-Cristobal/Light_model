@@ -8,6 +8,9 @@ using std::vector;
 #include <iostream>
 
 
+/**
+*
+*/
 LightSource::LightSource(glm::vec3 pos) : position(pos), VBO(0), VAO(0),
 	vertices({		// positions				// normals        // texture coords
 					-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		0.0f, 0.0f,

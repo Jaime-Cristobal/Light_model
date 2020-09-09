@@ -76,7 +76,7 @@ void Launcher::start() const
 
 void Launcher::run()
 {
-	Shader shaderMat("Material.vs", "Multiple_light.fs");
+	Shader shaderMat("Mesh_Shader.vs", "Mesh_Shader.fs");
 	Shader shaderLight("light.vs", "light.fs");
 
 	stbi_set_flip_vertically_on_load(true);
@@ -129,14 +129,14 @@ void Launcher::run()
 		shaderMat.setMat4("model", model);
 		backpack.draw(shaderMat);
 
-		shaderLight.use();
-		light.editCoordinateMatrix(projection, "projection");
-		light.editCoordinateMatrix(view, "view");
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, light.getPosition());
-		model = glm::scale(model, glm::vec3(0.2f));
-		light.editCoordinateMatrix(model, "model");
-		light.draw(shaderLight);
+		//shaderLight.use();
+		//light.editCoordinateMatrix(projection, "projection");
+		//light.editCoordinateMatrix(view, "view");
+		//model = glm::mat4(1.0f);
+		//model = glm::translate(model, light.getPosition());
+		//model = glm::scale(model, glm::vec3(0.2f));
+		//light.editCoordinateMatrix(model, "model");
+		//light.draw(shaderLight);
 
 		render();
 
