@@ -90,10 +90,18 @@ void Launcher::run()
 	light.addCoordinateMatrix(glm::mat4(1.0f), "view");
 	light.addCoordinateMatrix(glm::mat4(1.0f), "model");
 
+	shaderMat.use();
+
 	// set light material properties
 	shaderMat.setInt("material.diffuse", 0);
 	shaderMat.setInt("material.specular", 1);
 	shaderMat.setFloat("material.shininess", 32.0f);
+
+	// directional light
+	shaderMat.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	shaderMat.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	shaderMat.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	shaderMat.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
 	// directional light
 	shaderMat.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
@@ -116,6 +124,8 @@ void Launcher::run()
 		// testing backpack
 		shaderMat.use();
 
+		shaderMat.setVec3("viewPos", cam.getPosition());
+
 		projection = glm::perspective(glm::radians(cam.getZoom()),
 			static_cast<float>(winWidth / winHeight), 0.1f, 100.0f);
 		shaderMat.setMat4("projection", projection);
@@ -129,14 +139,15 @@ void Launcher::run()
 		shaderMat.setMat4("model", model);
 		backpack.draw(shaderMat);
 
-		//shaderLight.use();
-		//light.editCoordinateMatrix(projection, "projection");
-		//light.editCoordinateMatrix(view, "view");
-		//model = glm::mat4(1.0f);
-		//model = glm::translate(model, light.getPosition());
-		//model = glm::scale(model, glm::vec3(0.2f));
-		//light.editCoordinateMatrix(model, "model");
-		//light.draw(shaderLight);
+		// light box
+		shaderLight.use();
+		light.editCoordinateMatrix(projection, "projection");
+		light.editCoordinateMatrix(view, "view");
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, light.getPosition());
+		model = glm::scale(model, glm::vec3(0.2f));
+		light.editCoordinateMatrix(model, "model");
+		light.draw(shaderLight);
 
 		render();
 

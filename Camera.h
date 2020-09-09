@@ -46,6 +46,7 @@ namespace lmt
 		void processMouseMovement(float xOffset, float yOffset, GLboolean constrainPitch);
 		void processMouseScroll(float yOffset);
 		glm::mat4 getViewMatrix() const;
+		glm::vec3 getPosition() const;
 
 		float getZoom() const;
 	};

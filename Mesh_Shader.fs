@@ -30,6 +30,9 @@ in vec3 FragPos;
 
 out vec4 FragColor;
 
+// function prototypes
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
+
 void main()
 {    
     // properties

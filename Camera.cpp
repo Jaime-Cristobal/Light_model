@@ -145,3 +145,9 @@ float Camera::getZoom() const
 {
 	return zoom;
 }
+
+
+glm::vec3 Camera::getPosition() const
+{
+	return position;
+}
