@@ -94,14 +94,8 @@ void Launcher::run()
 
 	// set light material properties
 	shaderMat.setInt("material.diffuse", 0);
-	shaderMat.setInt("material.specular", 1);
+	shaderMat.setInt("material.specular", 0);
 	shaderMat.setFloat("material.shininess", 32.0f);
-
-	// directional light
-	shaderMat.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-	shaderMat.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-	shaderMat.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-	shaderMat.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
 	// directional light
 	shaderMat.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
