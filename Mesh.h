@@ -59,6 +59,7 @@ namespace lmt
 
 	public:
 		Mesh(std::vector<Vertex> vert, std::vector<unsigned int> ind, std::vector<Texture> tex);
+		~Mesh();
 		void draw(Shader& shader);
 	};
 }

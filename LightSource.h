@@ -38,6 +38,7 @@ namespace lmt
 
 	public:
 		LightSource(glm::vec3 pos = glm::vec3(1.2f, 1.0f, 2.0f));
+		~LightSource();
 		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName);
 		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName, std::function<void(glm::mat4)> const& callback);
 		void editCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName);

@@ -59,6 +59,12 @@ LightSource::LightSource(glm::vec3 pos) : position(pos), VBO(0), VAO(0),
 	std::cout << "LightSource is created!" << std::endl;
 }
 
+LightSource::~LightSource()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+}
+
 
 /**
 * 
