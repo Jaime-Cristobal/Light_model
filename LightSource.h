@@ -42,7 +42,7 @@ namespace lmt
 		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName);
 		void addCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName, std::function<void(glm::mat4)> const& callback);
 		void editCoordinateMatrix(glm::mat4 const& matrix, std::string const& idName);
-		void draw(Shader const& shader);
+		void draw(Shader& shader);
 		glm::vec3 getPosition() const;
 	};
 }

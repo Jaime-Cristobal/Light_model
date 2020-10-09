@@ -41,8 +41,13 @@ void main()
 
     // Directional lighting
     vec3 result = CalcDirLight(dirLight, texture_normal1, viewDir);
-
     FragColor = vec4(result, 1.0);
+
+    // FOR TESTING PURPOSES
+    //vec3 ambient = light.ambient * vec3(texture(texture_diffuse1, TexCoords));
+    //vec3 diffuse = light.diffuse * diff * vec3(texture(texture_diffuse1, TexCoords));
+    //vec3 specular = light.specular * spec * vec3(texture(texture_specular1, TexCoords));
+    //FragColor = texture(tex, TexCoords);
 }
 
 

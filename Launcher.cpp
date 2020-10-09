@@ -85,7 +85,7 @@ void Launcher::run()
 	glm::mat4 view{ glm::mat4(1.0f) };
 	glm::mat4 model{ glm::mat4(1.0f) };
 
-	LightSource light = LightSource(glm::vec3(10.0f, 2.0f, 1.0f));
+	LightSource light = LightSource(glm::vec3(5.0f, 2.0f, 1.0f));
 	light.addCoordinateMatrix(glm::mat4(1.0f), "projection");
 	light.addCoordinateMatrix(glm::mat4(1.0f), "view");
 	light.addCoordinateMatrix(glm::mat4(1.0f), "model");
@@ -99,7 +99,7 @@ void Launcher::run()
 
 	// directional light
 	shaderMat.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-	shaderMat.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	shaderMat.setVec3("dirLight.ambient", 0.4f, 0.4f, 0.4f);
 	shaderMat.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
 	shaderMat.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 

@@ -112,7 +112,7 @@ void LightSource::editCoordinateMatrix(glm::mat4 const& matrix, std::string cons
 /**
 * 
 */
-void LightSource::draw(Shader const& shader)
+void LightSource::draw(Shader& shader)
 {
 	glBindVertexArray(VAO);
 
@@ -123,7 +123,7 @@ void LightSource::draw(Shader const& shader)
 
 		if (callback)
 			callback(matrix);
-
+		
 		shader.setMat4(idName, matrix);
 	});
 
